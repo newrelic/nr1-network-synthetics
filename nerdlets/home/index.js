@@ -6,10 +6,7 @@ const RootNerdlet = () => {
   const [accounts, setAccounts] = useState([]);
   const [search, setSearch] = useState('');
   const [filteredAccounts, setFilteredAccounts] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState({
-    id: 1482036,
-    name: 'Keagan Playground',
-  });
+  const [selectedAccount, setSelectedAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
