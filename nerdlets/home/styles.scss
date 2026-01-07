@@ -1,0 +1,226 @@
+@import url("https://unpkg.com/leaflet@1.9.4/dist/leaflet.css");
+@import '~@newrelic/nr-labs-components/dist/styles.css';
+
+.account-dropdown {
+  margin-bottom: 8px;
+  margin-top: 4px;
+}
+
+.flow-node-root {
+  padding: 4px;
+}
+
+.header-card {
+  padding-bottom: 12px;
+}
+
+.filters {
+  font-size: 14px;
+  min-width: 0;
+}
+
+.filter-button {
+  margin-top: 6px;
+  margin-right: 16px;
+  margin-bottom: 8px;
+}
+
+.filter-icon {
+  margin-right: 4px;
+  margin-top: 4px;
+  margin-left: 4px;
+}
+
+.traces-table {
+  margin-bottom: 16px;
+}
+
+// Color variables for hop types
+$color-regular: #3498db;
+$color-target: #2ecc71;
+$color-private: #9b59b6;
+$color-timeout: #e74c3c;
+$color-warning: #e67e22;
+
+// Common section spacing
+.section-title {
+  margin-bottom: 8px;
+}
+
+.section-spacing {
+  margin-bottom: 16px;
+}
+
+.section-spacing-lg {
+  margin-bottom: 24px;
+}
+
+// Chart grid layout (trace-drilldown)
+.chart-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.chart-row-last {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.chart-container {
+  flex: 1;
+  height: 230px;
+}
+
+.chart-content {
+  height: 200px;
+}
+
+// Trace map container
+.trace-map {
+  width: 100%;
+}
+
+// Panel/card containers
+.panel {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.panel--flow {
+  height: 220px;
+  overflow: auto;
+  background-color: #fafafa;
+}
+
+.panel--map {
+  height: 400px;
+  overflow: hidden;
+}
+
+.full-size {
+  height: 100%;
+  width: 100%;
+}
+
+// Legend components
+.legend {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.legend--top {
+  margin-bottom: 24px;
+}
+
+.legend--bottom {
+  margin-top: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.legend-label {
+  font-size: 12px;
+}
+
+.legend-note {
+  font-size: 12px;
+  color: $color-warning;
+}
+
+// Legend color swatches - square variant
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+
+  &--regular { background-color: $color-regular; }
+  &--target { background-color: $color-target; }
+  &--private { background-color: $color-private; }
+  &--timeout { background-color: $color-timeout; }
+}
+
+// Legend color swatches - circular variant (for map)
+.legend-swatch-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+  &--regular { background-color: $color-regular; }
+  &--target { background-color: $color-target; }
+  &--private { background-color: $color-private; }
+  &--timeout { background-color: $color-timeout; }
+}
+
+// Map popup
+.map-popup {
+  min-width: 180px;
+}
+
+.map-popup-estimated {
+  font-size: 10px;
+  color: $color-warning;
+  margin-bottom: 4px;
+}
+
+.map-popup-divider {
+  margin: 8px 0;
+}
+
+.map-popup-status {
+  margin-top: 4px;
+
+  &--target { color: $color-target; }
+  &--private { color: $color-private; }
+}
+
+// Modal content
+.modal-content {
+  margin-top: 16px;
+}
+
+// Detail list (key-value pairs)
+.detail-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-key {
+  font-weight: bold;
+  min-width: 180px;
+  color: #333;
+}
+
+.detail-value {
+  color: #666;
+}
+
+// Code block (for error display)
+.code-block {
+  background-color: #2d2d2d;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: monospace;
+  font-size: 13px;
+  color: #f8f8f2;
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 400px;
+  overflow: auto;
+}
+
+// Text overflow with tooltip
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

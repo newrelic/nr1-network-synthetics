@@ -1,0 +1,6 @@
+{
+  "schemaType": "NERDLET",
+  "id": "netpath-nerdlet",
+  "displayName": "Network Synthetics",
+  "description": "Visualize traceroute data reported via nri-net-path OHI"
+}

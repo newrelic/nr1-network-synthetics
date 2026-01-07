@@ -1,0 +1,7 @@
+{
+  "schemaType": "LAUNCHER",
+  "id": "netpath-launcher",
+  "displayName": "Network Synthetics",
+  "description": "Visualize traceroute data reported via nri-net-path OHI",
+  "rootNerdletId": "netpath-nerdlet"
+}
