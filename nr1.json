@@ -1,6 +1,6 @@
 {
   "schemaType": "NERDPACK",
-  "id": "4e70d481-4cda-44c9-a521-fd35e80f2b48",
+  "id": "7c515b39-bc77-4193-a0de-ae36a98c6c61",
   "displayName": "nr1-network-synthetics",
   "description": "Visualize data reported via nri-net-path OHI"
 }
