@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { AccountsQuery, Dropdown, DropdownItem, Spinner } from 'nr1';
+import {
+  AccountsQuery,
+  Dropdown,
+  DropdownItem,
+  EmptyState,
+  Spinner,
+} from 'nr1';
 import Overview from '../components/overview';
 
 const RootNerdlet = () => {
@@ -44,7 +50,16 @@ const RootNerdlet = () => {
   }
 
   if (!loading && accounts.length === 0) {
-    return <div>TODO: Error State</div>;
+    return (
+      <EmptyState
+        iconType={
+          EmptyState.ICON_TYPE
+            .HARDWARE_AND_SOFTWARE__SOFTWARE__DATABASE__S_WARNING
+        }
+        title="No accounts found"
+        description="Check browser console for errors"
+      />
+    );
   }
 
   return (
