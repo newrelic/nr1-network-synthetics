@@ -261,71 +261,101 @@ const TraceMap = ({
       }));
     }
 
-    // Process each hop and interpolate missing coordinates
-    return sortedHops.map((hop, index) => {
+    // Pass 1: compute base positions, spacing null-coord hops proportionally
+    // within their gap rather than collapsing them all to the same offset.
+    const basePositions = sortedHops.map((hop, index) => {
       if (hop.hop_lat !== null && hop.hop_lon !== null) {
-        return {
-          ...hop,
-          interpolated_lat: hop.hop_lat,
-          interpolated_lon: hop.hop_lon,
-          hasValidCoords: true,
-        };
+        return { lat: hop.hop_lat, lon: hop.hop_lon, valid: true };
       }
 
-      // Find nearest hops with valid coordinates (before and after)
-      let prevHopWithCoords = null;
-      let nextHopWithCoords = null;
-
+      // Find index of nearest known hops before and after
+      let prevIndex = -1;
+      let nextIndex = -1;
       for (let i = index - 1; i >= 0; i--) {
         if (sortedHops[i].hop_lat !== null && sortedHops[i].hop_lon !== null) {
-          prevHopWithCoords = sortedHops[i];
+          prevIndex = i;
           break;
         }
       }
-
       for (let i = index + 1; i < sortedHops.length; i++) {
         if (sortedHops[i].hop_lat !== null && sortedHops[i].hop_lon !== null) {
-          nextHopWithCoords = sortedHops[i];
+          nextIndex = i;
           break;
         }
       }
 
-      // Interpolate position
-      if (prevHopWithCoords && nextHopWithCoords) {
-        const ratio = 0.5;
+      if (prevIndex >= 0 && nextIndex >= 0) {
+        // Interpolate proportionally based on position within the gap
+        const gapSize = nextIndex - prevIndex;
+        const ratio = (index - prevIndex) / gapSize;
         return {
-          ...hop,
-          interpolated_lat:
-            prevHopWithCoords.hop_lat +
-            (nextHopWithCoords.hop_lat - prevHopWithCoords.hop_lat) * ratio,
-          interpolated_lon:
-            prevHopWithCoords.hop_lon +
-            (nextHopWithCoords.hop_lon - prevHopWithCoords.hop_lon) * ratio,
-          hasValidCoords: false,
+          lat:
+            sortedHops[prevIndex].hop_lat +
+            (sortedHops[nextIndex].hop_lat - sortedHops[prevIndex].hop_lat) *
+              ratio,
+          lon:
+            sortedHops[prevIndex].hop_lon +
+            (sortedHops[nextIndex].hop_lon - sortedHops[prevIndex].hop_lon) *
+              ratio,
+          valid: false,
         };
-      } else if (prevHopWithCoords) {
+      } else if (prevIndex >= 0) {
+        // Space progressively further from the last known hop
+        const dist = index - prevIndex;
         return {
-          ...hop,
-          interpolated_lat: prevHopWithCoords.hop_lat + 0.3,
-          interpolated_lon: prevHopWithCoords.hop_lon + 0.3,
-          hasValidCoords: false,
+          lat: sortedHops[prevIndex].hop_lat + 0.3 * dist,
+          lon: sortedHops[prevIndex].hop_lon + 0.3 * dist,
+          valid: false,
         };
-      } else if (nextHopWithCoords) {
+      } else if (nextIndex >= 0) {
+        // Space progressively further from the next known hop
+        const dist = nextIndex - index;
         return {
-          ...hop,
-          interpolated_lat: nextHopWithCoords.hop_lat - 0.3,
-          interpolated_lon: nextHopWithCoords.hop_lon - 0.3,
-          hasValidCoords: false,
+          lat: sortedHops[nextIndex].hop_lat - 0.3 * dist,
+          lon: sortedHops[nextIndex].hop_lon - 0.3 * dist,
+          valid: false,
         };
       }
 
       return {
-        ...hop,
-        interpolated_lat: 39.8283,
-        interpolated_lon: -98.5795,
-        hasValidCoords: false,
+        lat: 39.8283 + index * 0.5,
+        lon: -98.5795 + index * 0.5,
+        valid: false,
       };
     });
+
+    // Pass 2: detect hops that share the same position (real duplicates or
+    // collisions from interpolation) and spread them in a small circle so
+    // every marker is individually visible on the map.
+    const positionGroups = {};
+    basePositions.forEach((pos, i) => {
+      const key = pos.lat.toFixed(4) + ',' + pos.lon.toFixed(4);
+      if (!positionGroups[key]) positionGroups[key] = [];
+      positionGroups[key].push(i);
+    });
+
+    const jitterRadius = 0.12; // ~13 km — enough to separate markers visually
+    const finalPositions = basePositions.map((pos) => ({ ...pos }));
+
+    Object.values(positionGroups).forEach((indices) => {
+      if (indices.length < 2) return;
+      indices.forEach((idx, nth) => {
+        const angle = (2 * Math.PI * nth) / indices.length;
+        finalPositions[idx].lat =
+          basePositions[idx].lat + jitterRadius * Math.sin(angle);
+        finalPositions[idx].lon =
+          basePositions[idx].lon + jitterRadius * Math.cos(angle);
+        // Mark as not having authoritative coords since position was adjusted
+        finalPositions[idx].valid = false;
+      });
+    });
+
+    return sortedHops.map((hop, index) => ({
+      ...hop,
+      interpolated_lat: finalPositions[index].lat,
+      interpolated_lon: finalPositions[index].lon,
+      hasValidCoords: finalPositions[index].valid,
+    }));
   }, [sortedHops]);
 
   // Calculate map center and bounds
